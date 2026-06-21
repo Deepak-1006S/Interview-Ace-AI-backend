@@ -8,6 +8,8 @@ import {
   skipQuestion,
   completeInterview,
   deleteInterview,
+  saveProgress,
+  batchSubmit,
 } from '../controllers/interviewController.js';
 import { protect } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -21,6 +23,7 @@ router.post(
   '/',
   [
     body('type')
+      .optional()
       .isIn(['behavioral', 'technical', 'coding', 'system-design', 'mixed', 'hr'])
       .withMessage('Invalid interview type'),
     body('difficulty')
@@ -28,12 +31,18 @@ router.post(
       .isIn(['easy', 'medium', 'hard'])
       .withMessage('Invalid difficulty'),
     body('questionCount').optional().isInt({ min: 1, max: 20 }).withMessage('1-20 questions allowed'),
+    body('jobRole').optional().isString(),
+    body('title').optional().isString(),
   ],
   validate,
   createInterview
 );
 
 router.get('/:id', getInterview);
+
+router.put('/:id/progress', saveProgress);
+
+router.put('/:id/submit', batchSubmit);
 
 router.post(
   '/:id/answer',

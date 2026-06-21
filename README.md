@@ -31,15 +31,28 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env`:
+Edit `.env` and set these **required** variables:
 ```env
 PORT=5000
 NODE_ENV=development
+
+# MongoDB connection string
 MONGODB_URI=mongodb://localhost:27017/interviewace
-JWT_SECRET=your-long-random-secret-here
-ANTHROPIC_API_KEY=sk-ant-...
-ALLOWED_ORIGINS=http://localhost:5173
+
+# JWT secret (use a strong random string in production)
+JWT_SECRET=your-long-random-secret-here-min-32-chars
+
+# ⚠️ REQUIRED: Get from https://console.anthropic.com/account/keys
+ANTHROPIC_API_KEY=sk-ant-v1-...
+
+# Frontend origins (comma-separated)
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:5174
 ```
+
+**🔑 Getting your Anthropic API Key:**
+1. Go to https://console.anthropic.com/account/keys
+2. Create a new API key
+3. Copy it and paste into `.env` as `ANTHROPIC_API_KEY`
 
 ### 3. Seed the database (optional but recommended)
 ```bash
