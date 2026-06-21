@@ -18,20 +18,10 @@ const app = express();
 // ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet());
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
-  .split(',')
-  .map((o) => o.trim());
+import { getCorsOptions } from './config/cors.js';
 
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      // Allow no-origin requests (curl, Postman) and whitelisted origins
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-      cb(new Error(`CORS: origin ${origin} not allowed`));
-    },
-    credentials: true,
-  })
-);
+// Centralized CORS options
+app.use(cors(getCorsOptions()));
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────────
 const limiter = rateLimit({

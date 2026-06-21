@@ -2,17 +2,14 @@ import { Server } from 'socket.io';
 import { verifyToken } from '../utils/jwt.js';
 import User from '../models/User.js';
 import { streamFeedback } from './aiService.js';
+import { allowedOrigins } from '../config/cors.js';
 
 let io;
 
 export const initSocket = (server) => {
-  const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
-    .split(',')
-    .map((o) => o.trim());
-
   io = new Server(server, {
     cors: {
-      origin: allowedOrigins,
+      origin: allowedOrigins.includes('*') ? true : allowedOrigins,
       credentials: true,
     },
     transports: ['websocket', 'polling'],
