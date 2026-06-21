@@ -10,6 +10,9 @@ import questionRoutes from './routes/questions.js';
 import analyticsRoutes from './routes/analytics.js';
 import feedbackRoutes from './routes/feedback.js';
 import userRoutes from './routes/users.js';
+import resumeRoutes from './routes/resume.js';
+import codingRoutes from './routes/coding.js';
+import leaderboardRoutes from './routes/leaderboard.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
 
@@ -67,6 +70,9 @@ app.use('/api/v1/interviews', interviewRoutes);
 app.use('/api/v1/questions', questionRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/feedback', feedbackRoutes);
+app.use('/api/v1/resume', resumeRoutes);
+app.use('/api/v1/coding', codingRoutes);
+app.use('/api/v1/leaderboard', leaderboardRoutes);
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
 app.use(notFound);

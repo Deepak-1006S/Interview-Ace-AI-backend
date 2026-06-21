@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { getProfile, updateProfile, changePassword, deleteAccount } from '../controllers/userController.js';
+import { getProfile, updateProfile, changePassword, deleteAccount, getUserStats } from '../controllers/userController.js';
 import { protect } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 router.use(protect);
+
+router.get('/stats', getUserStats);
 
 router.get('/profile', getProfile);
 

@@ -168,3 +168,42 @@ Be specific, constructive, and mention one key strength and one improvement.`;
   }
   return fullText;
 };
+
+/**
+ * Analyze a resume and generate ATS scoring and feedback.
+ */
+export const generateResumeAnalysis = async ({ resume, targetRole }) => {
+  const prompt = `You are an ATS (Applicant Tracking System) expert and recruiter analyzing a resume.
+
+Resume Content:
+${resume}
+
+Target Role: ${targetRole || 'Software Engineer'}
+
+Analyze the resume and return ONLY valid JSON with no extra text:
+{
+  "overallScore": <0-100>,
+  "atsScore": <0-100>,
+  "strengthAreas": {
+    "technical": { "score": <0-100>, "highlights": ["item1", "item2"] },
+    "experience": { "score": <0-100>, "highlights": ["item1", "item2"] },
+    "education": { "score": <0-100>, "highlights": ["item1", "item2"] },
+    "format": { "score": <0-100>, "issues": ["issue1", "issue2"] }
+  },
+  "improvements": ["improvement1", "improvement2", "improvement3"],
+  "missingKeywords": ["keyword1", "keyword2", "keyword3"],
+  "matchWithRole": { "score": <0-100>, "reasoning": "explanation" },
+  "recommendedChanges": ["change1", "change2", "change3"],
+  "summary": "1-2 paragraph overall assessment"
+}`;
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 2000,
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  const text = response.content[0].text.trim();
+  const clean = text.replace(/```json\n?|\n?```/g, '').trim();
+  return JSON.parse(clean);
+};
