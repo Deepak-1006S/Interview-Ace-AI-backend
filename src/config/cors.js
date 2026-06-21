@@ -1,4 +1,4 @@
-const DEFAULT = 'http://localhost:5173';
+const DEFAULT = 'http://localhost:5173,http://localhost:5174,https://interview-ace-ai-frontend-three.vercel.app';
 
 const raw = process.env.ALLOWED_ORIGINS || DEFAULT;
 
@@ -16,7 +16,14 @@ export const allowedOrigins = parseAllowed(raw);
 export const getCorsOptions = () => {
   // If '*' present, allow all origins
   if (allowedOrigins.includes('*')) {
-    return { origin: true, credentials: true };
+    return {
+      origin: true,
+      credentials: true,
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      exposedHeaders: ['Authorization'],
+      optionsSuccessStatus: 204,
+    };
   }
 
   return {
@@ -26,6 +33,10 @@ export const getCorsOptions = () => {
       cb(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Authorization'],
+    optionsSuccessStatus: 204,
   };
 };
 

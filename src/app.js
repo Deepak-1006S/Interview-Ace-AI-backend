@@ -22,6 +22,7 @@ import { getCorsOptions } from './config/cors.js';
 
 // Centralized CORS options
 app.use(cors(getCorsOptions()));
+app.options('*', cors(getCorsOptions()));
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────────
 const limiter = rateLimit({
