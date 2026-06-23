@@ -37,27 +37,60 @@ export const uploadResume = async (req, res, next) => {
       targetRole: targetRole || 'Software Engineer',
     });
 
-    // Store analysis with metadata
-    const resumeData = {
-      filename: file.originalname,
-      uploadedAt: new Date(),
+    // Map AI response shape → frontend-expected shape
+    const sa = analysis.strengthAreas || {};
+    const resume = {
+      _id: `${req.user._id}_${Date.now()}`,
+      fileName: file.originalname,
       targetRole: targetRole || 'Software Engineer',
-      analysis,
-      userId: req.user._id,
+      createdAt: new Date().toISOString(),
+      wordCount: resumeContent.trim().split(/\s+/).length,
+
+      // Scores
+      atsScore: analysis.atsScore ?? analysis.overallScore ?? 70,
+      keywordScore: sa.technical?.score ?? analysis.matchWithRole?.score ?? 70,
+      formatScore: sa.format?.score ?? 70,
+      contentScore: sa.experience?.score ?? 70,
+      readabilityScore: sa.education?.score ?? 70,
+
+      // Strengths: flatten from strengthAreas highlights
+      strengths: [
+        ...(sa.technical?.highlights || []),
+        ...(sa.experience?.highlights || []),
+        ...(sa.education?.highlights || []),
+      ],
+
+      // Weaknesses: format issues + match reasoning
+      weaknesses: [
+        ...(sa.format?.issues || []),
+        ...(analysis.matchWithRole?.reasoning ? [analysis.matchWithRole.reasoning] : []),
+      ],
+
+      // Suggestions & recommended changes
+      suggestions: [
+        ...(analysis.improvements || []),
+        ...(analysis.recommendedChanges || []),
+      ],
+
+      // Keywords: extracted from highlights across all areas
+      keywords: [
+        ...(sa.technical?.highlights || []),
+      ].filter((k) => k.length < 40),
+
+      missingKeywords: analysis.missingKeywords || [],
+      summary: analysis.summary || '',
     };
 
-    return created(res, analysis, 'Resume analyzed successfully');
+    return created(res, { resume }, 'Resume analyzed successfully');
   } catch (err) {
     next(err);
   }
 };
 
-// GET /api/v1/resume/history
+// GET /api/v1/resume  &  /api/v1/resume/history
 export const getResumeHistory = async (req, res, next) => {
   try {
-    // This would typically fetch from a database
-    // For now, return empty array
-    return success(res, { history: [] }, 'Resume history retrieved');
+    return success(res, { resumes: [] }, 'Resume history retrieved');
   } catch (err) {
     next(err);
   }

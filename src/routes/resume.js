@@ -22,6 +22,7 @@ const upload = multer({
 });
 
 router.post('/upload', upload.single('resume'), uploadResume);
+router.get('/', getResumeHistory);
 router.get('/history', getResumeHistory);
 
 export default router;
